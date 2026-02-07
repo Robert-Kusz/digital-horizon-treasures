@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="/manifest.json">
 
-  <!-- Google Analytics (REPLACE G-XXXXXXX WITH YOUR REAL GA4 ID) -->
+  <!-- Google Analytics (replace G-XXXXXXX) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -22,12 +22,11 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(180deg, #0b0b0b, #000000);
+      background: linear-gradient(180deg, #0b0b0b, #000);
       color: gold;
       text-align: center;
     }
 
-    /* Splash Screen */
     #splash {
       position: fixed;
       inset: 0;
@@ -40,9 +39,8 @@
     }
 
     header {
-      padding: 22px 16px;
+      padding: 22px;
       font-size: 1.6rem;
-      font-weight: 600;
       border-bottom: 1px solid rgba(255,215,0,.35);
     }
 
@@ -64,10 +62,6 @@
       color: gold;
       text-decoration: none;
       font-size: .85rem;
-    }
-
-    section {
-      margin-top: 20px;
     }
 
     .button {
@@ -97,6 +91,24 @@
       border-bottom: 1px solid gold;
       font-size: .85rem;
     }
+
+    #salePopup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+
+    .popupContent {
+      background: #000;
+      padding: 20px;
+      border: 1px solid gold;
+      border-radius: 12px;
+      max-width: 300px;
+    }
   </style>
 </head>
 
@@ -105,10 +117,13 @@
   <!-- Splash -->
   <div id="splash">💎 Digital Horizon Treasures</div>
 
-  <!-- Install / QR Prompt -->
+  <!-- Install Banner -->
   <div id="installBanner">
-    📲 Save this app: Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>
+    📲 Save this app: Share → Add to Home Screen
   </div>
+
+  <!-- Push Button -->
+  <div class="button" onclick="enablePush()">🔔 Enable Notifications</div>
 
   <header>💎 Digital Horizon Treasures</header>
 
@@ -130,20 +145,17 @@
     <a class="button" href="#shop">🔥 Best Sellers</a>
   </section>
 
-  <section id="shop">
-    <iframe 
-      src="https://www.digitalhorizonphotography.co.uk/shop/"
-      loading="lazy">
-    </iframe>
+  <!-- QR Section -->
+  <section>
+    <h3>📱 Scan to Install App</h3>
+    <canvas id="qrCanvas"></canvas>
+    <p>Use during TikTok LIVE</p>
+  </section>
 
-    <!-- Fallback -->
-    <a
-      class="button"
-      href="https://www.digitalhorizonphotography.co.uk/shop/"
-      target="_blank"
-      rel="noopener">
-      🔗 Open Full Shop
-    </a>
+  <!-- Shop -->
+  <section id="shop">
+    <iframe src="https://www.digitalhorizonphotography.co.uk/shop/" loading="lazy"></iframe>
+    <a class="button" href="https://www.digitalhorizonphotography.co.uk/shop/" target="_blank">🔗 Open Full Shop</a>
   </section>
 
   <section>
@@ -151,16 +163,45 @@
     <a class="button" href="mailto:info@digitalhorizonphotography.co.uk">📩 Contact Us</a>
   </section>
 
-  <!-- Service Worker + Splash Logic -->
+  <!-- SALE POPUP -->
+  <div id="salePopup">
+    <div class="popupContent">
+      🔥 LIVE DEAL 🔥<br><br>
+      10% OFF during TikTok LIVE<br><br>
+      <a href="#shop" class="button">Shop Now</a>
+      <button onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js");
+    navigator.serviceWorker?.register("/service-worker.js");
+
+    function enablePush() {
+      Notification.requestPermission().then(p =>
+        alert(p === "granted" ? "Notifications enabled 🎉" : "Notifications blocked")
+      );
     }
 
+    function generateQR() {
+      const c = document.getElementById("qrCanvas");
+      const ctx = c.getContext("2d");
+      c.width = c.height = 200;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0,0,200,200);
+      ctx.fillStyle = "#000";
+      ctx.font = "12px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("app.digitalhorizonphotography.co.uk",100,100);
+    }
+
+    function showPopup(){document.getElementById("salePopup").style.display="flex";}
+    function closePopup(){document.getElementById("salePopup").style.display="none";}
+
     window.addEventListener("load", () => {
-      setTimeout(() => {
-        document.getElementById("splash").style.display = "none";
-      }, 800);
+      generateQR();
+      setTimeout(() => document.getElementById("splash").style.display="none", 800);
+      setTimeout(showPopup, 10000);
     });
   </script>
 
