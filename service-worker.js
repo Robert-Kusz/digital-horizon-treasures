@@ -1,4 +1,5 @@
 self.addEventListener("install", event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open("dht-cache-v1").then(cache => {
       return cache.addAll([
@@ -15,5 +16,17 @@ self.addEventListener("fetch", event => {
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
     })
+  );
+});
+
+/* Push notifications (future-ready) */
+self.addEventListener("push", event => {
+  const data = event.data?.json() || {};
+  self.registration.showNotification(
+    data.title || "Digital Horizon Treasures",
+    {
+      body: data.body || "New update available",
+      icon: "/icons/icon-192.png"
+    }
   );
 });
