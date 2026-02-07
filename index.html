@@ -1,179 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digital Horizon Treasures</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Horizon Treasures</title>
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#000000">
-  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="/manifest.json">
 
-  <!-- OneSignal (Option A – manual LIVE trigger via template) -->
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-  <script>
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(function () {
-      OneSignal.init({
-        appId: "55439cf3-66fa-44a2-adf1-8c97cd0b88b3",
-        notifyButton: { enable: false }
-      });
+<!-- OneSignal -->
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function () {
+    OneSignal.init({
+      appId: "55439cf3-66fa-44a2-adf1-8c97cd0b88b3",
+      notifyButton: { enable: false }
     });
+  });
 
-    function enablePush() {
-      OneSignal.push(function () {
-        OneSignal.showSlidedownPrompt();
-      });
-    }
-  </script>
-
-  <!-- Styles -->
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(180deg, #0b0b0b, #000);
-      color: gold;
-      text-align: center;
+  function enablePush() {
+    if (!window.OneSignal || !OneSignal.push) {
+      alert("Push system still loading — try again in a moment.");
+      return;
     }
 
-    #splash {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      font-size: 1.6rem;
-    }
+    OneSignal.push(function () {
+      OneSignal.showSlidedownPrompt();
+      document.getElementById("pushStatus").innerText =
+        "📲 Check your browser prompt above";
+    });
+  }
+</script>
 
-    header {
-      padding: 22px;
-      font-size: 1.6rem;
-      border-bottom: 1px solid rgba(255,215,0,.35);
-    }
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(180deg, #0b0b0b, #000);
+  color: gold;
+  text-align: center;
+}
 
-    nav {
-      position: sticky;
-      top: 0;
-      background: #000;
-      padding: 12px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      z-index: 10;
-    }
+header {
+  padding: 22px;
+  font-size: 1.6rem;
+  border-bottom: 1px solid rgba(255,215,0,.35);
+}
 
-    nav a {
-      padding: 10px 14px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,215,0,.4);
-      color: gold;
-      text-decoration: none;
-      font-size: .85rem;
-    }
+nav {
+  position: sticky;
+  top: 0;
+  background: #000;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
 
-    .button {
-      display: block;
-      margin: 16px auto;
-      padding: 16px;
-      width: 85%;
-      max-width: 360px;
-      background: #000;
-      border-radius: 14px;
-      border: 1px solid rgba(255,215,0,.4);
-      color: gold;
-      text-decoration: none;
-      font-size: 1rem;
-      cursor: pointer;
-    }
+nav a {
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,215,0,.4);
+  color: gold;
+  text-decoration: none;
+  font-size: .85rem;
+}
 
-    iframe {
-      width: 100%;
-      height: 75vh;
-      border: none;
-      border-top: 1px solid rgba(255,215,0,.2);
-    }
+.button {
+  display: block;
+  margin: 16px auto;
+  padding: 16px;
+  width: 85%;
+  max-width: 360px;
+  background: #000;
+  border-radius: 14px;
+  border: 1px solid rgba(255,215,0,.4);
+  color: gold;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
 
-    #salePopup {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9998;
-    }
+iframe {
+  width: 100%;
+  height: 75vh;
+  border: none;
+}
 
-    .popupContent {
-      background: #000;
-      padding: 20px;
-      border: 1px solid gold;
-      border-radius: 12px;
-      max-width: 300px;
-    }
-
-    /* iOS install prompt */
-    #iosInstallPrompt {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #000;
-      color: gold;
-      padding: 14px 18px;
-      border-radius: 12px;
-      border: 1px solid gold;
-      font-size: .85rem;
-      z-index: 9999;
-      max-width: 90%;
-      display: none;
-    }
-  </style>
+#pushStatus {
+  font-size: .8rem;
+  opacity: .8;
+}
+</style>
 </head>
 
 <body>
 
-<!-- Splash -->
-<div id="splash">💎 Digital Horizon Treasures</div>
-
-<!-- iOS Install Prompt -->
-<div id="iosInstallPrompt">
-  📲 Install this app for faster checkout<br>
-  Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>
-  <div style="margin-top:8px;text-align:right;cursor:pointer;" onclick="dismissIOSPrompt()">✕</div>
-</div>
-
-<!-- Push Button -->
-<div class="button" onclick="enablePush()">🔔 Enable Notifications</div>
-
 <header>💎 Digital Horizon Treasures</header>
 
+<div class="button" onclick="enablePush()">🔔 Enable Notifications</div>
+<p id="pushStatus">Tap to enable notifications for LIVE alerts</p>
+
 <nav>
-  <a href="#jewellery">💍 Jewellery</a>
-  <a href="#gifts">🎁 Gifts</a>
-  <a href="#bestsellers">🔥 Best Sellers</a>
+  <a href="#shop">🛍️ Shop</a>
+  <a href="https://www.tiktok.com/@digital.horizon.p">🎥 TikTok LIVE</a>
 </nav>
-
-<section id="jewellery">
-  <a class="button" href="#shop">🛍️ Shop Jewellery</a>
-</section>
-
-<section id="gifts">
-  <a class="button" href="#shop">🎁 Photo & Gift Items</a>
-</section>
-
-<section id="bestsellers">
-  <a class="button" href="#shop">🔥 Best Sellers</a>
-</section>
-
-<section>
-  <h3>📱 Scan to Install App</h3>
-  <img
-    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://app.digitalhorizonphotography.co.uk"
-    alt="Install App QR">
-</section>
 
 <section id="shop">
   <iframe src="https://www.digitalhorizonphotography.co.uk/shop/" loading="lazy"></iframe>
@@ -182,54 +114,10 @@
   </a>
 </section>
 
-<section>
-  <a class="button" href="https://www.tiktok.com/@digital.horizon.p">🎥 TikTok LIVE</a>
-  <a class="button" href="mailto:info@digitalhorizonphotography.co.uk">📩 Contact Us</a>
-</section>
-
-<!-- Sale Popup -->
-<div id="salePopup">
-  <div class="popupContent">
-    🔥 LIVE DEAL 🔥<br><br>
-    10% OFF during TikTok LIVE<br><br>
-    <a href="#shop" class="button">Shop Now</a>
-    <div class="button" onclick="closePopup()">Close</div>
-  </div>
-</div>
-
-<!-- Scripts -->
 <script>
-  navigator.serviceWorker?.register("/service-worker.js");
-
-  function closePopup() {
-    document.getElementById("salePopup").style.display = "none";
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js");
   }
-
-  function isIOS() {
-    return /iphone|ipad|ipod/i.test(navigator.userAgent);
-  }
-
-  function isInStandaloneMode() {
-    return ('standalone' in window.navigator) && window.navigator.standalone;
-  }
-
-  function dismissIOSPrompt() {
-    document.getElementById("iosInstallPrompt").style.display = "none";
-    localStorage.setItem("iosPromptDismissed", "true");
-  }
-
-  window.addEventListener("load", () => {
-    setTimeout(() => document.getElementById("splash").style.display = "none", 800);
-    setTimeout(() => document.getElementById("salePopup").style.display = "flex", 10000);
-
-    if (
-      isIOS() &&
-      !isInStandaloneMode() &&
-      !localStorage.getItem("iosPromptDismissed")
-    ) {
-      document.getElementById("iosInstallPrompt").style.display = "block";
-    }
-  });
 </script>
 
 </body>
