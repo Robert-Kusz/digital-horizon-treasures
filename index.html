@@ -112,21 +112,29 @@ iframe {
 </section>
 
 <script>
-/* Helpers */
+/* ---------- HELPERS ---------- */
 function isIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
+
 function isStandalone() {
-  return window.navigator.standalone === true;
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true
+  );
 }
 
-/* Service Worker */
+/* ---------- SERVICE WORKER ---------- */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
 }
 
-/* OneSignal Init */
-window.addEventListener("load", function () {
+/* ---------- ON LOAD LOGIC ---------- */
+window.addEventListener("load", () => {
+  const installHelp = document.getElementById("installHelp");
+  const notifyBtn = document.getElementById("notifyBtn");
+
+  // Initialise OneSignal
   window.OneSignal = window.OneSignal || [];
   OneSignal.push(function () {
     OneSignal.init({
@@ -135,20 +143,26 @@ window.addEventListener("load", function () {
     });
   });
 
-  /* Hide install prompt once installed */
+  // iOS installed app
   if (isIOS() && isStandalone()) {
-    const help = document.getElementById("installHelp");
-    if (help) help.style.display = "none";
+    localStorage.setItem("appInstalled", "true");
+    if (installHelp) installHelp.style.display = "none";
+    if (notifyBtn) notifyBtn.innerText = "🔔 Enable Notifications";
+    return;
   }
 
-  /* Smart button text */
-  const btn = document.getElementById("notifyBtn");
+  // iOS but not installed
   if (isIOS() && !isStandalone()) {
-    btn.innerText = "📲 Install app to enable notifications";
+    if (installHelp) installHelp.style.display = "block";
+    if (notifyBtn) notifyBtn.innerText = "📲 Install app to enable notifications";
+    return;
   }
+
+  // Non-iOS devices
+  if (installHelp) installHelp.style.display = "none";
 });
 
-/* Enable Notifications */
+/* ---------- ENABLE PUSH ---------- */
 function enablePush() {
   if (isIOS() && !isStandalone()) {
     alert("Please install the app first:\nShare → Add to Home Screen");
@@ -166,9 +180,9 @@ function enablePush() {
         document.getElementById("pushStatus").innerText =
           "✅ Notifications already enabled";
       } else {
-        OneSignal.showSlidedownPrompt();
+        OneSignal.registerForPushNotifications();
         document.getElementById("pushStatus").innerText =
-          "📲 Check your prompt above";
+          "📲 Check the permission prompt";
       }
     });
   });
