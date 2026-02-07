@@ -19,7 +19,7 @@ self.addEventListener("fetch", event => {
   );
 });
 
-/* Push-ready (safe to leave even if unused) */
+/* Push-ready (safe even if unused) */
 self.addEventListener("push", event => {
   const data = event.data?.json() || {};
   self.registration.showNotification(
