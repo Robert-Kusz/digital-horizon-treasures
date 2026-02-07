@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Digital Horizon Treasures</title>
 
+<!-- PWA -->
 <meta name="theme-color" content="#000000">
 <link rel="manifest" href="/manifest.json">
 
@@ -69,25 +70,33 @@ iframe {
   font-size: .8rem;
   opacity: .8;
 }
-</style>
-</head>
 
-<body>
-<div id="installHelp" style="
+/* Install prompt */
+#installHelp {
   background:#000;
   border:1px solid gold;
   padding:14px;
   margin:12px;
   border-radius:12px;
   font-size:.85rem;
-">
+}
+</style>
+</head>
+
+<body>
+
+<!-- INSTALL PROMPT -->
+<div id="installHelp">
   📲 <strong>Install for LIVE alerts</strong><br>
   iPhone: Tap <strong>Share ⬆️</strong> → <strong>Add to Home Screen</strong>
 </div>
 
 <header>💎 Digital Horizon Treasures</header>
 
-<div class="button" onclick="enablePush()">🔔 Enable Notifications</div>
+<!-- NOTIFICATION BUTTON -->
+<div class="button" id="notifyBtn" onclick="enablePush()">
+  🔔 Enable Notifications
+</div>
 <p id="pushStatus">Tap to enable notifications for LIVE alerts</p>
 
 <nav>
@@ -103,12 +112,20 @@ iframe {
 </section>
 
 <script>
-/* Register Service Worker */
+/* Helpers */
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function isStandalone() {
+  return window.navigator.standalone === true;
+}
+
+/* Service Worker */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
 }
 
-/* Initialise OneSignal AFTER load */
+/* OneSignal Init */
 window.addEventListener("load", function () {
   window.OneSignal = window.OneSignal || [];
   OneSignal.push(function () {
@@ -117,12 +134,29 @@ window.addEventListener("load", function () {
       notifyButton: { enable: false }
     });
   });
+
+  /* Hide install prompt once installed */
+  if (isIOS() && isStandalone()) {
+    const help = document.getElementById("installHelp");
+    if (help) help.style.display = "none";
+  }
+
+  /* Smart button text */
+  const btn = document.getElementById("notifyBtn");
+  if (isIOS() && !isStandalone()) {
+    btn.innerText = "📲 Install app to enable notifications";
+  }
 });
 
-/* Enable Push (SAFE VERSION) */
+/* Enable Notifications */
 function enablePush() {
+  if (isIOS() && !isStandalone()) {
+    alert("Please install the app first:\nShare → Add to Home Screen");
+    return;
+  }
+
   if (!window.OneSignal || !OneSignal.push) {
-    alert("Push system still loading, please wait 2 seconds.");
+    alert("Push system still loading, please wait a moment.");
     return;
   }
 
@@ -134,7 +168,7 @@ function enablePush() {
       } else {
         OneSignal.showSlidedownPrompt();
         document.getElementById("pushStatus").innerText =
-          "📲 Check your Safari prompt above";
+          "📲 Check your prompt above";
       }
     });
   });
