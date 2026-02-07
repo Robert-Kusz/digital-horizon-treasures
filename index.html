@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="/manifest.json">
 
-  <!-- Google Analytics (replace G-XXXXXXX with your real GA4 ID) -->
+  <!-- Google Analytics (replace G-XXXXXXX later) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -18,6 +18,7 @@
     gtag('config', 'G-XXXXXXX');
   </script>
 
+  <!-- Splash Screen Styles -->
   <style>
     body {
       margin: 0;
@@ -27,35 +28,42 @@
       text-align: center;
     }
 
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-size: 1.6rem;
+    }
+
     header {
       padding: 22px 16px;
       font-size: 1.6rem;
       font-weight: 600;
-      border-bottom: 1px solid rgba(255, 215, 0, 0.35);
+      border-bottom: 1px solid rgba(255,215,0,.35);
     }
 
     nav {
-      padding: 12px;
-      background: #000;
       position: sticky;
       top: 0;
-      z-index: 10;
+      background: #000;
+      padding: 12px;
       display: flex;
       justify-content: center;
       gap: 10px;
+      z-index: 10;
     }
 
     nav a {
       padding: 10px 14px;
-      font-size: 0.85rem;
       border-radius: 20px;
-      border: 1px solid rgba(255, 215, 0, 0.4);
+      border: 1px solid rgba(255,215,0,.4);
       color: gold;
       text-decoration: none;
-    }
-
-    nav a:hover {
-      background: rgba(255, 215, 0, 0.1);
+      font-size: .85rem;
     }
 
     section {
@@ -70,7 +78,7 @@
       max-width: 360px;
       background: #000;
       border-radius: 14px;
-      border: 1px solid rgba(255, 215, 0, 0.4);
+      border: 1px solid rgba(255,215,0,.4);
       color: gold;
       text-decoration: none;
       font-size: 1rem;
@@ -80,23 +88,37 @@
       width: 100%;
       height: 75vh;
       border: none;
-      border-top: 1px solid rgba(255, 215, 0, 0.2);
+      border-top: 1px solid rgba(255,215,0,.2);
+    }
+
+    /* Install Banner */
+    #installBanner {
+      background:#000;
+      padding:12px;
+      border-bottom:1px solid gold;
+      font-size:.85rem;
     }
   </style>
 </head>
 
 <body>
 
+  <!-- Splash Screen -->
+  <div id="splash">💎 Digital Horizon Treasures</div>
+
+  <!-- Install / QR Prompt -->
+  <div id="installBanner">
+    📲 Save this app: Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>
+  </div>
+
   <header>💎 Digital Horizon Treasures</header>
 
-  <!-- Navigation -->
   <nav>
     <a href="#jewellery">💍 Jewellery</a>
     <a href="#gifts">🎁 Gifts</a>
     <a href="#bestsellers">🔥 Best Sellers</a>
   </nav>
 
-  <!-- Categories -->
   <section id="jewellery">
     <a class="button" href="#shop">🛍️ Shop Jewellery</a>
   </section>
@@ -109,34 +131,38 @@
     <a class="button" href="#shop">🔥 Best Sellers</a>
   </section>
 
-  <!-- Embedded Shop -->
   <section id="shop">
     <iframe 
       src="https://www.digitalhorizonphotography.co.uk/shop/" 
       loading="lazy">
     </iframe>
 
-    <!-- Fallback -->
     <a 
-      class="button" 
-      href="https://www.digitalhorizonphotography.co.uk/shop/" 
-      target="_blank" 
+      class="button"
+      href="https://www.digitalhorizonphotography.co.uk/shop/"
+      target="_blank"
       rel="noopener">
       🔗 Open Full Shop
     </a>
   </section>
 
-  <!-- External Links -->
   <section>
     <a class="button" href="https://www.tiktok.com/@digital.horizon.p">🎥 TikTok LIVE</a>
     <a class="button" href="mailto:info@digitalhorizonphotography.co.uk">📩 Contact Us</a>
   </section>
 
-  <!-- Service Worker -->
+  <!-- Service Worker Registration -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/service-worker.js");
     }
+
+    // Splash screen removal
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("splash").style.display = "none";
+      }, 800);
+    });
   </script>
 
 </body>
