@@ -1,21 +1,44 @@
-{
-  "name": "Digital Horizon Treasures",
-  "short_name": "DHTreasures",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
-  "orientation": "portrait",
-  "icons": [
+self.addEventListener("install", event => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open("dht-cache-v1").then(cache => {
+      return cache.addAll([
+        "/",
+        "/index.html",
+        "/manifest.json"
+      ]);
+    })
+  );
+});
+
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
+});
+
+/* PUSH NOTIFICATIONS */
+self.addEventListener("push", event => {
+  const data = event.data ? event.data.json() : {};
+
+  self.registration.showNotification(
+    data.title || "Digital Horizon Treasures",
     {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      body: data.body || "We’re live on TikTok now!",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      data: {
+        url: data.url || "/"
+      }
     }
-  ]
-}
+  );
+});
+
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url)
+  );
+});
